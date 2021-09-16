@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,7 +9,9 @@
     <!-- bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <!-- local CSS file -->
-    <link href="{% static 'styles.css' %}" rel="stylesheet">
+    <!-- <link href="./style.css" rel="stylesheet"> -->
+    <!-- load CSS static file-->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
   </head>
   <body>
     <!-- Navigation bar starts -->
@@ -28,9 +29,25 @@
                     <a class="nav-link active" aria-current="page" href="#">Home</a>
                 </li>
                 {% if user.is_authenticated %}
+                    {% if buyer and seller %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">My Cart</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">My Items</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">New Item</a>
+                        </li>
+                    {% elif buyer %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">My Cart</a>
+                        </li>
+                    {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">My cart</a>
+                        <a class="nav-link" href="#">New Item</a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                     </li>
@@ -55,6 +72,6 @@
     </nav>
     <!-- Navigation bar ends -->
     <!-- body block -->
-    {% block body %}{% endblock %}
+    <div id="body">{% block body %}{% endblock %}</div>
   </body>
 </html>

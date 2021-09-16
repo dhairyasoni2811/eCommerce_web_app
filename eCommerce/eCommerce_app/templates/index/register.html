@@ -5,10 +5,10 @@
     <h2>Register</h2>
 
     {% if message %}
-        <div>{{ message }}</div>
+        <div class="alert alert-danger" role="alert">{{ message }}</div>
     {% endif %}
 
-    <form action="{% url 'register' %}" method="post">
+    <form action="{% url 'register' %}" class="registerform" method="post">
         {% csrf_token %}
         <div class="form-group">
             <input class="form-control" autofocus type="text" name="username" placeholder="Username">
@@ -22,7 +22,23 @@
         <div class="form-group">
             <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
         </div>
-        <input class="btn btn-primary" type="submit" value="Register">
+        <div class="regisetrpagegrid">
+            <div class="form-check" id="registercheck1">
+                <input class="form-check-input" type="checkbox" name="seller" value="seller" id="sellercheck">
+                <label class="form-check-label" for="sellercheck">
+                  Seller
+                </label>
+              </div>
+              <div class="form-check" id="registercheck1">
+                <input class="form-check-input" type="checkbox" value="buyer" name="buyer" id="buyercheck" checked>
+                <label class="form-check-label" for="buyercheck">
+                  Buyer
+                </label>
+              </div>
+        </div>
+        <div class="registerbtn">
+            <input class="btn btn-primary" type="submit" value="Register">
+        </div>
     </form>
 
     Already have an account? <a href="{% url 'login' %}">Log In here.</a>
