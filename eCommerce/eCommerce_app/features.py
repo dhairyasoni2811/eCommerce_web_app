@@ -1,18 +1,19 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
-from django.db import IntegrityError
 from .models import User, Category, Comment, Cart
 from .models import SellItemList as SI
 from .models import BuyerOrSeller as BOS
 
 
-# Create your views here.
-def index(req):
-    return render(req, "index/index.html")
+def new_user(name, email, password):
+    user = User(username=name, email=email, password=password)
+    user.save()
+    return f""" 
+                New user added.\n
+                username: {name}\n
+                email: {email}
+            """
 
 
+"""
 def login_view(request):
     if request.method == "POST":
 
@@ -30,7 +31,7 @@ def login_view(request):
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "index/login.html")
+        return render(request, "auctions/login.html")
 
 
 def logout_view(request):
@@ -62,5 +63,6 @@ def register(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "index/register.html")
+        return render(request, "auctions/register.html")
 
+"""
