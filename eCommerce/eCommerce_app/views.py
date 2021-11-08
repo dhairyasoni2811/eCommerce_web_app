@@ -5,17 +5,14 @@ from django.urls import reverse
 from django.db import IntegrityError
 from .models import User, Category, Comment, Cart
 from .models import SellItemList as SI
-from .models import BuyerOrSeller as BOS
 
 
 # Create your views here.
-def index(req):
-    if req.user.is_authenticated:
-        arr = check_roll(req.user)
-        return render(req, "index/index.html", arr)
+def index(request):
+    if request.user.is_authenticated:
+        return render(request, "index/index.html")
     else:
-        return render(req, 'index/index.html')
-
+        return render(request, 'index/index.html')
 
 def login_view(request):
     if request.method == "POST":
@@ -30,7 +27,7 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "auctions/login.html", {
+            return render(request, "index/login.html", {
                 "message": "Invalid username and/or password."
             })
     else:
@@ -50,48 +47,41 @@ def register(request):
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
-        buyer = request.POST.get("buyer")
-        seller = request.POST.get("seller")
-        if buyer != None or seller != None:
-            if password != confirmation:
-                return render(request, "index/register.html", {
-                    "message": "Passwords must match."
-                })
-
-            # Attempt to create new user
-            try:
-                user = User.objects.create_user(username, email, password)
-                user.save()
-                b = False
-                s = False
-                if buyer is not None and seller is not None:
-                    b = True
-                    s = True
-                elif buyer is not None and seller is None:
-                    b = True
-                    s = False
-                elif buyer is None and seller is not None:
-                    b = False
-                    s = True
-                bos = BOS(user=user, buyer=b, seller=s)
-                bos.save()
-            except IntegrityError:
-                return render(request, "index/register.html", {
-                    "message": "Username already taken."
-                })
-            login(request, user)
-            return HttpResponseRedirect(reverse("index"))
-        else:
+        if password != confirmation:
             return render(request, "index/register.html", {
-                "message": "Select your roll as a seller or as a buyer."
+                "message": "Passwords must match."
             })
+            # Attempt to create new user
+        try:
+            user = User.objects.create_user(username, email, password)
+            user.save()
+        except IntegrityError:
+            return render(request, "index/register.html", {
+                "message": "Username already taken."
+            })
+        login(request, user)
+        return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "index/register.html")
 
 
-def check_roll(user):
-    bos = BOS.objects.get(user=user)
-    buyer = bos.buyer
-    seller = bos.seller
-    print(buyer, " --- ", seller)
-    return {"buyer": buyer, "seller": seller}
+def new_item(request):
+    categories = Category.objects.all()
+    categories_name = []
+    for category in categories:
+        categories_name.append(category.Item_Category)
+    if (str (request.method)) == "POST":
+        title = request.POST["item_title"]
+        description = request.POST["item_description"]
+        price = request.POST["item_price"]
+        url = request.POST["item_image_url"]
+        quantity = request.POST.get("quantity")
+        category = request.POST["item_category"]
+        cat = Category.objects.get(Item_Category = category)
+        user = request.user
+        add_item = SI(category = cat, seller= user, quantity=quantity, title =title, image_url = url,
+                      description = description, price = price)
+        add_item.save()
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        return render(request, "index/newitem.html", {"categories_name": categories_name})

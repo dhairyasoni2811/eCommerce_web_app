@@ -22,16 +22,6 @@ class Category(models.Model):
         return f"{self.pk}. - {self.Item_Category}"
 
 
-class BuyerOrSeller(models.Model):
-    """ this module will store if the user is buyer or seller """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="buyer_or_seller")
-    buyer = models.BooleanField(default=False)
-    seller = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.user.username} has roll of buyer -> {self.buyer} seller -> {self.seller}"
-
-
 class SellItemList(models.Model):
     """ this module will store item details """
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="item_to_sell")
