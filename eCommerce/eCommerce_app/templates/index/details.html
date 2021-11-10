@@ -26,6 +26,27 @@
         #comments_div{
             margin-top: 5em;
         }
+        #grid{
+            display: grid;
+            grid-template-columns: 100% 10%;
+        }
+        #send_icon{
+            color: white;
+            font-size: 3em;
+        }
+        #submit_comment{
+            height: auto;
+            margin-top: 13%;
+            margin-left: -100%;
+            width: 100%;
+            background-color: rgb(0, 119, 255);
+            border-radius: 0 1em 1em 0;
+            border-color: white;
+        }
+        #comment{
+            padding-right:12%;    
+            border-radius: 1em;
+        }
     </style>
 {% endblock %}
 {% block body %}
@@ -47,10 +68,14 @@
             <div id="add_comment_section">
                 <form id="add_comment_form" action="{% url 'add_comment' %}" method="POST">  
                     {% csrf_token %}
-                    <textarea class="form-control" name="" id="comment" rows="3"></textarea>
-                    <button id="submit_comment" type="button">
-
-                    </button>
+                    <input type="hidden" id="user" value="{{user.username}}">
+                    <input type="hidden" id="item_id" value="{{info.id}}">
+                    <div id="grid">
+                        <textarea class="form-control" name="" id="comment" rows="4" placeholder="Add comment here ..."></textarea>
+                        <button id="submit_comment" type="button">
+                            <i class="material-icons" id="send_icon">&#xe163;</i>
+                        </button>
+                    </div>
                 </form>
             </div>
         {% endif %}
@@ -58,6 +83,8 @@
     <script>
         $("#submit_comment").click(()=>{
             let comment = $("#comment").val();
+            let username = $("#user").val()
+            let item_id = $("#item_id").val();
             console.log(comment);
             if(comment !== ""){
                 let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -69,7 +96,9 @@
                     url: "{% url 'add_comment' %}", 
                     type: "POST",
                     data:{
-                        "comment": comment
+                        "comment": comment,
+                        "username": username,
+                        "item_id":item_id
                     },
                     datatype: 'json'
                 });

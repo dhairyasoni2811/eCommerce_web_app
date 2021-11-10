@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.db import IntegrityError
 from .models import User, Category, Comment, Cart
@@ -99,5 +99,13 @@ def details(request, item_id):
 
 def add_comment(request):
     if request.method == "POST":
-        print(request.POST.get("comment"))
-    return HttpResponse()
+        comment_text = request.POST.get("comment")
+        item_id = request.POST.get("item_id")
+        username = request.POST.get("username")
+        user = User.objects.get(username = username)
+        item = SI.objects.get(id = item_id)
+        comment = Comment(user = user, item = item, comment = comment_text)
+        comment.save()
+        return HttpResponse()
+    else:
+        raise Http404("There is no page like this.")
