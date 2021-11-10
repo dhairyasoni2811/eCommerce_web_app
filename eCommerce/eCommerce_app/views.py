@@ -9,10 +9,12 @@ from .models import SellItemList as SI
 
 # Create your views here.
 def index(request):
+    items = SI.objects.all()
     if request.user.is_authenticated:
-        return render(request, "index/index.html")
+        return render(request, "index/display.html", {"items" : items, "title": "Index", "authenticate": True})
     else:
-        return render(request, 'index/index.html')
+        return render(request, 'index/display.html', {"items" : items, "title": "Index", "authenticate": False})
+
 
 def login_view(request):
     if request.method == "POST":
@@ -85,3 +87,17 @@ def new_item(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "index/newitem.html", {"categories_name": categories_name})
+
+
+def details(request, item_id):
+    try:
+        item_details = SI.objects.get(id=item_id)
+    except SI.DoesNotExist:
+        print("Err")
+    return render(request, "index/details.html", {"info": item_details})
+
+
+def add_comment(request):
+    if request.method == "POST":
+        print(request.POST.get("comment"))
+    return HttpResponse()
