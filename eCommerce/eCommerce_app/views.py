@@ -114,8 +114,6 @@ def add_comment(request):
 
 def get_comments(request, item_id):
     item = SI.objects.get(id = item_id)
-    print(item)
     comments = Comment.objects.all().filter(item = item)
-    print(comments)
     comments = serializers.serialize("json", comments)
     return JsonResponse({"comments": comments})
