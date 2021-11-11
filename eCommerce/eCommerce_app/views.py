@@ -1,6 +1,7 @@
+from django.core import serializers
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.urls import reverse
 from django.db import IntegrityError
 from .models import User, Category, Comment, Cart
@@ -109,3 +110,12 @@ def add_comment(request):
         return HttpResponse()
     else:
         raise Http404("There is no page like this.")
+
+
+def get_comments(request, item_id):
+    item = SI.objects.get(id = item_id)
+    print(item)
+    comments = Comment.objects.all().filter(item = item)
+    print(comments)
+    comments = serializers.serialize("json", comments)
+    return JsonResponse({"comments": comments})
