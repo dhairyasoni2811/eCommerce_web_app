@@ -53,6 +53,17 @@
             border-bottom: 0.5px solid gray;
             margin-top: 2em;
         }
+        #btn_grids{
+            display: grid;
+            grid-template-columns: auto auto;
+            margin-top: 2em;
+        }
+        #buy_item_form{
+            text-align: right;
+        }
+        #message_div{
+            display: none;
+        }
     </style>
 {% endblock %}
 {% block body %}
@@ -62,10 +73,28 @@
             <h1 id="item_price">${{info.price}}</h1>
             <h2 id="item_title">{{info.title}}</h2>
             <small id="item_category">{{info.category.Item_Category}}</small>
+            {% if user.is_authenticated %}
+                <div id="btn_grids">
+                    <form action="{% url 'add_to_cart' %}" method="post" id="add_to_cart_form">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_id" value="{{info.id}}" id="">
+                        <input type="hidden" name="username" value="{{user.username}}">
+                        <button type="submit" class="btn btn-warning">Add to cart <i class="fa fa-shopping-cart" id="cart_icon"></i></button>
+                    </form>
+                    <form  id="buy_item_form">
+                        {% csrf_token %}
+                        <input type="hidden" id="buy_item_id" value="{{info.id}}">
+                        <button type="submit" class="btn btn-success">Buy <i id = "shopping_bag_icon" class="fa">&#xf290;</i></button>
+                    </form>
+                </div>
+            {% endif %}
         </div>
         <div id="right_grid" class="p-2">
             <pre id="item_description">{{info.description}}</pre>
         </div>
+    </div>
+    <div id="message_div">
+        <div id="message" class="animate__animated alert"></div>
     </div>
     <div id="comments_div">
         <input type="hidden" id="item_id" value="{{info.id}}">
@@ -88,7 +117,10 @@
     </div>
     <div id="display_comment_div"></div>
     <script>
-        $(document).ready(get_comment());
+        $(document).ready(()=>{
+            get_comment();
+            buy_item();
+        });
         function get_comment(){
             $("#display_comment_div").html("");
             let comments_req = $.get(`/get_comments/${$("#item_id").val()}`, data=>{
@@ -102,13 +134,63 @@
                 });
             });
         }
+        function buy_item(){
+            let request = $.ajax({
+                url: "{% url 'buy_item' info.id %}", 
+                type: "get",
+            }).done((result)=>{
+                let quantity = parseInt(result.quantity);
+                if(quantity === 0){
+                    $("#buy_item_form").hide();
+                    let message_div = $("#message_div");
+                    let message = $("#message");
+                    message_div.show();
+                    message.html("Item is out of stock for now.");
+                    message.addClass("alert-danger");
+                    message.addClass("animate__fadeInUp");
+                }
+            });
+        }
+        $("#buy_item_form").submit(()=>{
+            let item_id = $("#buy_item_id").val();
+            let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            $.ajaxSetup({
+                headers:{ 'X-CSRFTOKEN': csrftoken}
+            });
+            let request = $.ajax({
+                url: "{% url 'buy_item' %}", 
+                type: "POST",
+                data:{
+                    "item_id":item_id
+                },
+                datatype: 'json'
+            }).done((result)=>{
+                let quantity = parseInt(result.quantity);
+                let message_div = $("#message_div");
+                let message = $("#message");
+                message_div.show();
+                message.html("You bought this item.");
+                message.addClass("alert-success");
+                message.addClass("animate__fadeInUp");
+                setTimeout(()=>{
+                    message.removeClass("alert-success");
+                    message.removeClass("animate__fadeInUp");
+                    message.addClass("animate__fadeOutDown");
+                    setTimeout(()=>{
+                        message.removeClass("animate__fadeOutDown");   
+                        message_div.hide(); 
+                        buy_item();
+                    }, 1500);
+                }, 2000);
+            });
+            return false;    
+        });
         $("#submit_comment").click(()=>{
             let comment = $("#comment").val();
             let username = $("#user").val()
             let item_id = $("#item_id").val();
             if(comment !== ""){
                 let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                // const request = fetch("{% url 'add_comment' %}", {method: 'POST', headers: {'X-CSRFToken': csrftoken}, body:{comment:comment}});
                 $.ajaxSetup({
                     headers:{ 'X-CSRFTOKEN': csrftoken}
                 });

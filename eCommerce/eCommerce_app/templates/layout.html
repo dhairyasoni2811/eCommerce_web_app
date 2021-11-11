@@ -21,6 +21,7 @@
     <!-- load CSS static file-->
     <link href="{% static 'style.css' %}" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
       input, textarea, select{
@@ -61,7 +62,7 @@
             </li>
             {% if user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="#">My Cart</a>
+              <a class="nav-link" href="{% url 'show_cart' %}">My Cart</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">My Items</a>

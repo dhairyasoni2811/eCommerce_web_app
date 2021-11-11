@@ -12,9 +12,9 @@ from .models import SellItemList as SI
 def index(request):
     items = SI.objects.all()
     if request.user.is_authenticated:
-        return render(request, "index/display.html", {"items" : items, "title": "Index", "authenticate": True})
+        return render(request, "index/display.html", {"items" : [items], "title": "Index", "authenticate": True})
     else:
-        return render(request, 'index/display.html', {"items" : items, "title": "Index", "authenticate": False})
+        return render(request, 'index/display.html', {"items" : [items], "title": "Index", "authenticate": False})
 
 
 def login_view(request):
@@ -117,3 +117,40 @@ def get_comments(request, item_id):
     comments = Comment.objects.all().filter(item = item)
     comments = serializers.serialize("json", comments)
     return JsonResponse({"comments": comments})
+
+
+def add_to_cart(request):
+    username = request.POST["username"]
+    item_id = request.POST["item_id"]
+    user = User.objects.get(username = username)
+    item = SI.objects.get(id = item_id)
+    add_cart = Cart(user = user)
+    add_cart.save()
+    add_cart.item.add(item)
+    return HttpResponseRedirect(reverse("show_cart"))
+
+
+def get_cart(request):
+    if request.user.is_authenticated:
+        user = request.user
+        items = Cart.objects.all().filter(user = user)
+        item_q = []
+        for item in items:
+            item_q.append(item.item.all())
+        return render(request, "index/display.html", {"items": item_q, "title": "My Cart", "authenticate": True})
+
+    else:
+        raise Http404("Please sign in to see your cart.")
+
+
+def buy_item(request, item_id = None):
+    if request.method == "POST":
+        item_id = request.POST.get("item_id")
+        item = SI.objects.get(id = item_id)
+        quantity = item.quantity
+        latest_quantity = quantity - 1
+        if latest_quantity>=0:
+            SI.objects.filter(id = item_id).update(quantity = latest_quantity)
+    item = SI.objects.get(id = item_id)
+    quantity = item.quantity
+    return JsonResponse({"quantity": quantity})
