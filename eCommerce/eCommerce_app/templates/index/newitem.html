@@ -6,6 +6,10 @@
 <h1>NEW ITEM</h1>
 <form action="{% url 'new_item' %}" method="post" id="post_new_item">
   {% csrf_token %}
+  {% if edit == "edit" %}
+    <input type="hidden" name="item_id" id="item_id">
+    <input type="hidden" name="update" value="update">
+  {% endif %}
   <input
     type="text"
     name="item_title"
@@ -54,10 +58,23 @@
     <option value="{{i}}">{{i}}</option>
     {% endifequal %} {% endfor %}
   </select>
+
   <input type="submit" value="Submit" class="btn btn-primary"/>
 </form>
 <div id="message" class="alert animate__animated"></div>
 <script>
+  let edit = "{{edit}}";
+  if(edit){
+    $("#item_id").val(`{{info.id}}`);
+    $("#item_title").val(`{{info.title}}`);
+    $("#item_description").val(`{{info.description}}`);
+    $("#item_price").val(`{{info.price}}`);
+    $("#item_image_url").val(`{{info.image_url}}`);
+    $("#quantity").val(`{{info.quantity}}`);
+    $("#item_category").val(`{{info.category.Item_Category}}`);
+  }
+
+
   $("#post_new_item").submit(() => {
     title = $("#item_title").val();
     description = $("#item_description").val();

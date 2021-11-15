@@ -42,6 +42,7 @@
             background-color: rgb(0, 119, 255);
             border-radius: 0 1em 1em 0;
             border-color: white;
+            z-index: 1;
         }
         #comment{
             padding-right:12%;    
@@ -75,12 +76,22 @@
             <small id="item_category">{{info.category.Item_Category}}</small>
             {% if user.is_authenticated %}
                 <div id="btn_grids">
-                    <form action="{% url 'add_to_cart' %}" method="post" id="add_to_cart_form">
-                        {% csrf_token %}
-                        <input type="hidden" name="item_id" value="{{info.id}}" id="">
-                        <input type="hidden" name="username" value="{{user.username}}">
-                        <button type="submit" class="btn btn-warning">Add to cart <i class="fa fa-shopping-cart" id="cart_icon"></i></button>
-                    </form>
+                    {% if cart == "True" %}
+                        <form action="{% url 'add_to_cart' %}" method="POST" id="add_to_cart_form">
+                            {% csrf_token %}
+                            <input type="hidden" name="item_id" value="{{info.id}}" id="item_id">
+                            <input type="hidden" name="username" value="{{user.username}}" id="username">
+                            <button type="submit" class="btn btn-warning">Add to cart <i class="fa fa-shopping-cart" id="cart_icon"></i></button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'remove_from_cart' %}" method="POST" id="add_to_cart_form">
+                            {% csrf_token %}
+                            <input type="hidden" name="item_id" value="{{info.id}}" id="item_id">
+                            <input type="hidden" name="username" value="{{user.username}}" id="username">
+                            <button type="submit" class="btn btn-danger">Remove from cart <i class="fa fa-shopping-cart" id="cart_icon"></i></button>
+                        </form>
+                    {% endif %}
+                    
                     <form  id="buy_item_form">
                         {% csrf_token %}
                         <input type="hidden" id="buy_item_id" value="{{info.id}}">
@@ -117,6 +128,7 @@
     </div>
     <div id="display_comment_div"></div>
     <script>
+        console.log(`{{cart}}`);
         $(document).ready(()=>{
             get_comment();
             buy_item();
