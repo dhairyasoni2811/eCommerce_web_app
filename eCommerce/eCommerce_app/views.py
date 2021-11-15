@@ -1,3 +1,5 @@
+import time
+
 from django.core import serializers
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
@@ -10,17 +12,21 @@ from .models import SellItemList as SI
 
 # Create your views here.
 def index(request, filter_name=None):
-        if filter_name is not None:
-            item = SI.objects.all().filter(title__contains = f"{filter_name}").order_by("-id")
-            return render(request, "index/display.html", {"items": [item], "title": "Name Filter"})
-        else:
-            item = SI.objects.all().order_by("-id")
-            return render(request, 'index/display.html', {"items": [item], "title": "Index"})
+    if filter_name is not None:
+        item = SI.objects.all().filter(title__contains = f"{filter_name}").order_by("-id")
+        return render(request, "index/display.html", {"items": [item], "title": "Name Filter"})
+    else:
+        item = SI.objects.all().order_by("-id")[:10]
+        return render(request, 'index/display.html', {"items": [item], "title": "Index"})
 
 
 def filter_category(request, category_name):
     if category_name == "All":
         items = SI.objects.all().order_by("-id")
+    elif category_name == "hightolow":
+        items = SI.objects.all().order_by("-price")
+    elif category_name == "lowtohigh":
+        items = SI.objects.all().order_by("price")
     else:
         category = Category.objects.get(Item_Category=category_name)
         items = SI.objects.all().filter(category=category).order_by("-id")
@@ -84,12 +90,13 @@ def new_item(request):
     for category in categories:
         categories_name.append(category.Item_Category)
     if (str (request.method)) == "POST":
-        print(request.POST.get("update"))
-        print(request.POST.get("item_id"))
         title = request.POST["item_title"]
         description = request.POST["item_description"]
         price = request.POST["item_price"]
-        url = request.POST["item_image_url"]
+        url = None
+        print(len(request.FILES))
+        if len(request.FILES) != 0:
+            url = request.FILES["item_image_url"]
         quantity = request.POST.get("quantity")
         category = request.POST["item_category"]
         cat = Category.objects.get(Item_Category=category)
