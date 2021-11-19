@@ -70,7 +70,8 @@
 {% block body %}
     <div id="grid" class="d-flex flex-wrap">
         <div id="left_grid" class="p-2">
-            <img id="item_image" class="animate__animated animate__fadeIn" src="{{info.image_url}}">
+            <img id="item_image" class="animate__animated animate__fadeIn" src="../{{info.image_url}}">
+            <script>console.log("{{info.image_url}}");</script>
             <h1 id="item_price">${{info.price}}</h1>
             <h2 id="item_title">{{info.title}}</h2>
             <small id="item_category">{{info.category.Item_Category}}</small>

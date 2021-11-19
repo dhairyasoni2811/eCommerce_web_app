@@ -15,7 +15,8 @@
     <link href="{% static 'style.css' %}" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
+    <script src="https://unpkg.com/htmx.org@1.6.0" integrity="sha384-G4dtlRlMBrk5fEiRXDsLjriPo8Qk5ZeHVVxS8KhX6D7I9XXJlNqbdvRlp9/glk5D" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- bootstrap CSS -->
     <link
@@ -98,6 +99,10 @@
                 <a class="dropdown-item" href="{% url 'category' 'Toys' %}">Toys</a>
                 <a class="dropdown-item" href="{% url 'category' 'Fashion' %}">Fashion</a>
                 <a class="dropdown-item" href="{% url 'category' 'Home' %}">Home</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'category' 'hightolow' %}">Price: High to Low</a>
+                <a class="dropdown-item" href="{% url 'category' 'lowtohigh' %}">Price: Low to High</a>
+                
               </div>
             </li>
           </ul>

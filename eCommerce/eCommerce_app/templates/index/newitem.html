@@ -1,51 +1,74 @@
 {% extends "layout.html" %} {% block style %}
 <style>
+  input, textarea, select{
+        margin-top: 0em;
+        margin-bottom: 1em;
+      }
 </style>
 {% endblock %}{% block body %}
 
 <h1>NEW ITEM</h1>
-<form action="{% url 'new_item' %}" method="post" id="post_new_item">
-  {% csrf_token %}
+<form action="{% url 'new_item' %}" enctype="multipart/form-data" method="post" id="post_new_item">
+  {% csrf_token %} 
   {% if edit == "edit" %}
     <input type="hidden" name="item_id" id="item_id">
     <input type="hidden" name="update" value="update">
   {% endif %}
-  <input
-    type="text"
-    name="item_title"
-    placeholder="Item Title"
-    class="form-control"
-    id="item_title"
-  />
-  <textarea
-    name="item_description"
-    placeholder="Description"
-    cols="30"
-    rows="5"
-    class="form-control"
-    id="item_description"
-  ></textarea>
-  <input
-    type="text"
-    name="item_price"
-    placeholder="Price"
-    class="form-control"
-    id="item_price"
-  />
-  <input
-    type="text"
-    name="item_image_url"
-    placeholder="Image URL"
-    class="form-control"
-    id="item_image_url"
-  />
-  <input
-    type="number"
-    name="quantity"
-    placeholder="qunatity"
-    class="form-control"
-    id="quantity"
-  />
+  <div class="form-group">
+    <label for="item_title">Title</label>
+    <input
+      type="text"
+      name="item_title"
+      placeholder="Item Title"
+      class="form-control"
+      id="item_title"
+    />
+  </div>
+  <div class="form-group">
+    <label for="item_description">Description</label>
+    <textarea
+      name="item_description"
+      placeholder="Description"
+      cols="30"
+      rows="5"
+      class="form-control"
+      id="item_description"
+    ></textarea>
+  </div>
+  <div class="form-group">
+    <label for="item_price">Price</label>
+    <input
+      type="text"
+      name="item_price"
+      placeholder="Price"
+      class="form-control"
+      id="item_price"
+    />
+  </div>
+  <div class="form-group">
+    <label for="item_image_url">Image</label>
+    <input
+      type="file"
+      name="item_image_url"
+      placeholder="Image"
+      class="form-control"
+      id="item_image_url"
+      required
+    />
+  </div>
+  <div class="form-group">
+    <label for="quantity">Quantity</label>
+    <input
+      type="number"
+      name="quantity"
+      placeholder="qunatity"
+      class="form-control"
+      id="quantity"
+    />
+  </div>
+  <div class="form-group">
+    <label for="item_category">Category</label>
+    
   <select
     class="form-select"
     aria-label="Default select example"
@@ -58,6 +81,7 @@
     <option value="{{i}}">{{i}}</option>
     {% endifequal %} {% endfor %}
   </select>
+  </div>
 
   <input type="submit" value="Submit" class="btn btn-primary"/>
 </form>
@@ -69,7 +93,6 @@
     $("#item_title").val(`{{info.title}}`);
     $("#item_description").val(`{{info.description}}`);
     $("#item_price").val(`{{info.price}}`);
-    $("#item_image_url").val(`{{info.image_url}}`);
     $("#quantity").val(`{{info.quantity}}`);
     $("#item_category").val(`{{info.category.Item_Category}}`);
   }
@@ -79,7 +102,6 @@
     title = $("#item_title").val();
     description = $("#item_description").val();
     price = $("#item_price").val();
-    url = $("#item_image_url").val();
     quantity = $("#quantity").val();
     category = $("#item_category").val();
     if (
