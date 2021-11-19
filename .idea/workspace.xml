@@ -3,12 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="07707595-439d-4d62-8ebe-1df3c274a26d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eCommerce/db.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/eCommerce/eCommerce/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce_app/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce_app/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce_app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/eCommerce/eCommerce_app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce_app/templates/index/details.html" beforeDir="false" afterPath="$PROJECT_DIR$/eCommerce/eCommerce_app/templates/index/details.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/eCommerce/eCommerce/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce_app/templates/index/display.html" beforeDir="false" afterPath="$PROJECT_DIR$/eCommerce/eCommerce_app/templates/index/display.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce_app/templates/index/newitem.html" beforeDir="false" afterPath="$PROJECT_DIR$/eCommerce/eCommerce_app/templates/index/newitem.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce_app/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/eCommerce/eCommerce_app/templates/layout.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eCommerce/eCommerce_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/eCommerce/eCommerce_app/views.py" afterDir="false" />

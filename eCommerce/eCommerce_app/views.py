@@ -1,5 +1,4 @@
 import time
-
 from django.core import serializers
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
@@ -8,19 +7,54 @@ from django.urls import reverse
 from django.db import IntegrityError
 from .models import User, Category, Comment, Cart
 from .models import SellItemList as SI
+from django.core.paginator import Paginator, EmptyPage
+
+
+# from django.views.generic.list import ListView
 
 
 # Create your views here.
 def index(request, filter_name=None):
     if filter_name is not None:
-        item = SI.objects.all().filter(title__contains = f"{filter_name}").order_by("-id")
-        return render(request, "index/display.html", {"items": [item], "title": "Name Filter"})
+        page_index2 = 1
+        filter_item = SI.objects.all().filter(title__contains = f"{filter_name.lower()}").order_by("-id")
+        res = request.GET.get("page")
+        p2 = Paginator(filter_item, 10)
+        if res is not None:
+            page_index2 = int(res)
+            if page_index2 != 0:
+                try:
+                    page = p2.page(page_index2)
+                    ret = page.object_list
+                    time.sleep(0.5)
+                    return render(request, 'index/items_loop.html', {"items": [ret], "filter": "True", "page": page_index2 + 1})
+                except EmptyPage:
+                    return render(request, 'index/items_loop.html', {"items": [], "filter": "True", "page": 0})
+        page = p2.page(page_index2)
+        ret = page.object_list
+        return render(request, 'index/display.html', {"items": [ret], "title": "Filter Page", "filter": "True", "page": page_index2 + 1})
     else:
-        item = SI.objects.all().order_by("-id")[:10]
-        return render(request, 'index/display.html', {"items": [item], "title": "Index"})
+        page_index = 1
+        item = SI.objects.all().order_by("-id")
+        res = request.GET.get("page")
+        p = Paginator(item, 10)
+        if res is not None:
+            page_index = int(res)
+            if page_index != 0:
+                try:
+                    page = p.page(page_index)
+                    ret = page.object_list
+                    time.sleep(0.5)
+                    return render(request, 'index/items_loop.html', {"items": [ret], "page": page_index + 1})
+                except EmptyPage:
+                    return render(request, 'index/items_loop.html', {"items": [], "page": 0})
+        page = p.page(page_index)
+        ret = page.object_list
+        return render(request, 'index/display.html', {"items": [ret], "title": "Index", "page":page_index+1})
 
 
 def filter_category(request, category_name):
+    page_index = 1
     if category_name == "All":
         items = SI.objects.all().order_by("-id")
     elif category_name == "hightolow":
@@ -30,7 +64,21 @@ def filter_category(request, category_name):
     else:
         category = Category.objects.get(Item_Category=category_name)
         items = SI.objects.all().filter(category=category).order_by("-id")
-    return render(request, 'index/display.html', {"items": [items], "title": "Category Filter"})
+    p = Paginator(items, 10)
+    res = request.GET.get("page")
+    if res is not None:
+        page_index = int(res)
+        if page_index != 0:
+            try:
+                page = p.page(page_index)
+                ret = page.object_list
+                time.sleep(0.5)
+                return render(request, 'index/items_loop.html', {"items": [ret], "page": page_index + 1})
+            except EmptyPage:
+                return render(request, 'index/items_loop.html', {"items": [], "page": 0})
+    page = p.page(page_index)
+    ret = page.object_list
+    return render(request, 'index/display.html', {"items": [ret], "title": "Category Filter", "page":page_index+1})
 
 
 def login_view(request):
@@ -102,7 +150,7 @@ def new_item(request):
         cat = Category.objects.get(Item_Category=category)
         user = request.user
         if (str (request.POST.get("update"))) != "update" :
-            add_item = SI(category=cat, seller=user, quantity=quantity, title=title, image_url=url,
+            add_item = SI(category=cat, seller=user, quantity=quantity, title=title.lower(), image_url=url,
                           description=description, price=price)
             add_item.save()
             return HttpResponseRedirect(reverse("index"))
@@ -190,7 +238,7 @@ def get_cart(request):
         item_q = []
         for item in items:
             item_q.append(item.item.all().order_by("-id"))
-        return render(request, "index/display.html", {"items": item_q, "title": "My Cart"})
+        return render(request, "index/display.html", {"items": item_q, "title": "My Cart", "page": 0})
     else:
         raise Http404("Please sign in to see your cart.")
 
