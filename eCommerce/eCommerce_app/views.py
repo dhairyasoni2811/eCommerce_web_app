@@ -1,3 +1,4 @@
+import json
 import time
 from django.core import serializers
 from django.shortcuts import render
@@ -245,6 +246,20 @@ def get_cart(request):
 
 def buy_item(request, item_id = None):
     if request.method == "POST":
+        cart = request.POST.get("cart")
+        if cart == "cart":
+            username = request.POST.get("username")
+            user = User.objects.get(username = username)
+            cart = Cart.objects.all().filter(user = user)
+            items = []
+            for item in cart:
+                for item in item.item.all():
+                    SI_items = (SI.objects.get(id = item.id))
+                    lastquantity = (SI_items.quantity)
+                    if lastquantity >0:
+                        SI.objects.filter(id=item.id).update(quantity=(lastquantity - 1))
+                        items.append(item)
+            return render(request, "index/pay_out_page.html", {"items": items})
         item_id = request.POST.get("item_id")
         item = SI.objects.get(id = item_id)
         quantity = item.quantity
