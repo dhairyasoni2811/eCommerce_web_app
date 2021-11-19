@@ -249,8 +249,12 @@ def buy_item(request, item_id = None):
         item = SI.objects.get(id = item_id)
         quantity = item.quantity
         latest_quantity = quantity - 1
-        if latest_quantity>=0:
-            SI.objects.filter(id = item_id).update(quantity = latest_quantity)
+        try:
+            if latest_quantity >= 0:
+                SI.objects.filter(id=item_id).update(quantity=latest_quantity)
+                return render(request, "index/pay_out_page.html", {"items": [item]})
+        except:
+            return HttpResponseRedirect(f"details/{item_id}")
     item = SI.objects.get(id = item_id)
     quantity = item.quantity
     return JsonResponse({"quantity": quantity})
@@ -283,4 +287,5 @@ def edit_item(request, item_id):
     for category in categories:
         categories_name.append(category.Item_Category)
     return render(request, "index/newitem.html", {"info": item, "edit":"edit", "categories_name": categories_name})
+
 
